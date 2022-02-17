@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import requests
 from flask import jsonify
 import json
+import re, cgi
 
 app = Flask(__name__)
 
@@ -21,9 +22,11 @@ def hello():
     for ns in noon_soup.find_all("div", {"class": "sc-e3js0d-9"}): 
         noon_name = ns.find('div').get_text(), 
         noon_name = ''.join(noon_name)
+        noon_old_price = ns.find("span", {"class": "oldPrice"})
         noon_data.append({
             'name': ' '.join(noon_name.split()[:3]),
-            'price': ns.find("div", {"class": "sc-sxpmji-1"}).get_text()
+            'price': ns.find("div", {"class": "sc-sxpmji-1"}).get_text(),
+            # 'old_price': noon_old_price
         })
     sharaf_dg = []
     # shd = sh_soup.find_all("div", {"class": "product-container"})
@@ -79,7 +82,7 @@ def hello():
     #     price.append(price.get_text())
     # result = [dict(item, **{'price': }) for item in name]
     # children = head.findChildren("span" , recursive=False)
-    # return render_template("index.html", soup=sh_soup)
+    # return render_template("index.html", soup=result)
     with open("scraped.json", "w") as outfile:
         json.dump(result, outfile)
     return jsonify(result)
